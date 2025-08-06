@@ -70,7 +70,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "API_URL": "https://test-kt8b.onrender.com",
+      "API_URL": "http://192.168.1.4:8000",
       "router": {},
       "eas": {
         "projectId": "e7ce0f44-beb9-4ae5-83ac-6a32940d6a3a"

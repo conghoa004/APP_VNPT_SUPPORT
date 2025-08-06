@@ -185,22 +185,48 @@ export default function HomeScreen() {
 
     try {
       if (!isOnline) {
+        // 🔸 Kiểm tra GPS có bật không
+        const isEnabled = await Location.hasServicesEnabledAsync();
+        if (!isEnabled) {
+          Alert.alert(
+            "GPS chưa bật",
+            "Vui lòng bật GPS để chuyển sang trực tuyến."
+          );
+          return;
+        }
+
+        // 🔸 Yêu cầu quyền truy cập vị trí foreground
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Chưa cấp quyền vị trí",
+            "Bạn cần cấp quyền vị trí để chuyển sang trực tuyến."
+          );
+          return;
+        }
+
+        // 🔸 Yêu cầu quyền chạy nền (background)
+        const bgStatus = await Location.requestBackgroundPermissionsAsync();
+        if (bgStatus.status !== "granted") {
+          Alert.alert(
+            "Chưa cấp quyền nền",
+            "Bạn cần cấp quyền chạy nền để ứng dụng gửi vị trí."
+          );
+          return;
+        }
+
+        // Nếu đã đầy đủ điều kiện thì bắt đầu gửi vị trí và cập nhật trạng thái
         await startBackgroundLocation();
         setIsOnline(true);
 
-        // Cập nhật trạng thái bên sever
-        await updateStatusEmployee(true); // Trạng thái online
-
-        // Lưu trạng thái online với AsyncStorage
+        await updateStatusEmployee(true); // Cập nhật trạng thái online
         await AsyncStorage.setItem("isOnline", "true");
       } else {
+        // Nếu đang online thì cho phép chuyển offline
         await stopBackgroundLocation();
         setIsOnline(false);
 
-        // Cập nhật trạng thái bên sever
-        await updateStatusEmployee(false); // Trạng thái offline
-
-        // Lưu trạng thái offline với AsyncStorage
+        await updateStatusEmployee(false); // Cập nhật trạng thái offline
         await AsyncStorage.setItem("isOnline", "false");
       }
     } catch (error) {

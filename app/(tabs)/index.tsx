@@ -1,75 +1,81 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// Import các hook và component cần thiết từ React và React Native
+import { useEffect, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
+import { Redirect } from "expo-router";
+import Constants from "expo-constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+// Lấy URL của API từ biến môi trường trong app.json
+const API_URL = Constants.expoConfig?.extra?.API_URL;
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+export default function Index() {
+  // State để kiểm tra quá trình đang check đăng nhập
+  const [checking, setChecking] = useState(true);
+
+  // State để xác định người dùng đã đăng nhập hay chưa
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Hàm kiểm tra trạng thái đăng nhập từ server
+    const checkAuth = async () => {
+      try {
+        // Gửi yêu cầu GET đến API kiểm tra trạng thái đăng nhập
+        const res = await fetch(`${API_URL}/api/check-login`, {
+          credentials: "include", // Cho phép gửi kèm cookie session
+        });
+
+        // Chuyển dữ liệu từ response thành JSON
+        const data = await res.json();
+
+        // Nếu phản hồi thành công và có thông tin người dùng
+        if (res.status === 200 && data.user !== null) {
+          // Lưu thông tin người dùng vào bộ nhớ cục bộ (AsyncStorage)
+          await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+          // Cập nhật trạng thái đã đăng nhập
+          setLoggedIn(true);
+
+          // Lấy token session
+          // Gọi API để lấy CSRF token
+          const csrfRes = await fetch(`${API_URL}/api/csrf-token`, {
+            credentials: "include",
+          });
+          const csrfData = await csrfRes.json();
+          const csrfToken = csrfData.csrf_token;
+
+          // Lưu CSRF token vào bộ nhớ
+          await AsyncStorage.setItem("csrf_token", csrfToken);
+        } else {
+          // Nếu không đăng nhập thì xóa thông tin người dùng khỏi bộ nhớ
+          await AsyncStorage.removeItem("user");
+        }
+      } catch (error) {
+        // Nếu có lỗi khi gọi API, in ra lỗi để debug
+        console.log("Không thể kiểm tra đăng nhập:", error);
+      }
+
+      // Kết thúc quá trình kiểm tra đăng nhập
+      setChecking(false);
+    };
+
+    // Gọi hàm kiểm tra đăng nhập khi component được mount
+    checkAuth();
+  }, []);
+
+  // Nếu đang kiểm tra, hiển thị vòng tròn loading
+  if (checking) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // Nếu đã đăng nhập, chuyển hướng đến trang chính (home)
+  // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+  return loggedIn ? (
+    <Redirect href="/(tabs)/home" />
+  ) : (
+    <Redirect href="/login" />
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

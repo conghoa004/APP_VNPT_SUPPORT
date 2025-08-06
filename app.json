@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "TEST",
-    "slug": "TEST",
+    "name": "VNPT Support",
+    "slug": "VNPT-Support",
+    "owner": "conghoa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,14 +10,34 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location"
+        ],
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật",
+        "NSLocationWhenInUseUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật",
+        "NSLocationAlwaysUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "usesCleartextTraffic": true
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.conghoa.TEST",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -24,6 +45,9 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-notifications"
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -33,10 +57,24 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Cho phép ứng dụng VNPT Support luôn truy cập vị trí",
+          "isAndroidBackgroundLocationEnabled": true
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "API_URL": "https://test-kt8b.onrender.com",
+      "router": {},
+      "eas": {
+        "projectId": "e7ce0f44-beb9-4ae5-83ac-6a32940d6a3a"
+      }
     }
   }
 }

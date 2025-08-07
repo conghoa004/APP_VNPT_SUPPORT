@@ -164,10 +164,11 @@ export default function HomeScreen() {
       body: JSON.stringify({
         trang_thai: isOnline, // Trạng thái sau khi đổi
       }),
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then((data) => {
         console.log("🔸 Cập nhật trạng thái nhân viên: ", data);
-      })
+      });
   }
 
   // 🔸 Khi bấm nút chuyển trạng thái Online/Offline
@@ -322,7 +323,7 @@ export default function HomeScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Header />
-      <LinearGradient colors={["#edf6ffff", "#edf6ffff"]} style={styles.container}>
+      <LinearGradient colors={["#1F7ED0", "#1F7ED0"]} style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
 
         <View style={styles.centerContainer}>

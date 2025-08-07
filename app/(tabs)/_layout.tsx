@@ -8,6 +8,9 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Ionicons } from "@expo/vector-icons";
+import { Slot } from "expo-router";
+import Toast from "react-native-toast-message";
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

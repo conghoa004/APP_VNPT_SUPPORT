@@ -95,7 +95,7 @@ export default function LoginScreen() {
       console.log("Data:", data);
 
       // Đăng nhập thành công
-      if (res.status === 200 && data.status === "success") {
+      if (res.status === 200) {
         Toast.show({
           type: "success",
           text1: "Đăng nhập thành công!",
@@ -120,11 +120,19 @@ export default function LoginScreen() {
         setEmailError(data.email?.[0] || "");
         setPasswordError(data.password?.[0] || "");
       }
-      // Sai tài khoản hoặc không được phép
+      // Sai mật khẩu tài khoản
       else if (res.status === 401 || res.status === 403) {
         const message = data.auth_failed || "Email hoặc mật khẩu không đúng.";
         setEmailError(message);
         setPasswordError(message);
+      }
+      //Tài khoản bị khóa
+      else if (res.status === 400) {
+        Toast.show({
+          type: "error",
+          text1: "Tài khoản bị khóa",
+          text2: data.auth_failed || "Hãy thử lại sau.",
+        });
       }
       // Bị giới hạn số lần đăng nhập
       else if (res.status === 429) {

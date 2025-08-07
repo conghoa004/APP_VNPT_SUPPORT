@@ -12,9 +12,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location"
-        ],
+        "UIBackgroundModes": ["location"],
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật",
         "NSLocationWhenInUseUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật",
         "NSLocationAlwaysUsageDescription": "Chúng tôi cần vị trí của bạn để hỗ trợ kỹ thuật"
@@ -45,9 +43,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      [
-        "expo-notifications"
-      ],
+      ["expo-notifications"],
       "expo-router",
       [
         "expo-splash-screen",
@@ -71,6 +67,7 @@
     },
     "extra": {
       "API_URL": "http://192.168.1.4:8000",
+      "API_URL_1": "https://test-kt8b.onrender.com",
       "router": {},
       "eas": {
         "projectId": "e7ce0f44-beb9-4ae5-83ac-6a32940d6a3a"

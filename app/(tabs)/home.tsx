@@ -18,6 +18,7 @@ import * as TaskManager from "expo-task-manager"; // Background Task
 import Constants from "expo-constants"; // Lấy biến môi trường
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Lưu dữ liệu cục bộ
 import Toast from "react-native-toast-message"; // Hiển thị thông báo dạng toast
+import Header from "@/components/Header";
 
 // 🔹 Định nghĩa các hằng số
 const API_URL = Constants.expoConfig?.extra?.API_URL; // Lấy URL API từ file app.config.js
@@ -163,7 +164,10 @@ export default function HomeScreen() {
       body: JSON.stringify({
         trang_thai: isOnline, // Trạng thái sau khi đổi
       }),
-    });
+    }).then((res) => res.json())
+      .then((data) => {
+        console.log("🔸 Cập nhật trạng thái nhân viên: ", data);
+      })
   }
 
   // 🔸 Khi bấm nút chuyển trạng thái Online/Offline
@@ -316,71 +320,77 @@ export default function HomeScreen() {
 
   // 🖼️ Giao diện
   return (
-    <LinearGradient colors={["#007BFF", "#005BAC"]} style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
+    <View style={{ flex: 1 }}>
+      <Header />
+      <LinearGradient colors={["#edf6ffff", "#edf6ffff"]} style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
 
-      <View style={styles.centerContainer}>
-        <View style={styles.card}>
-          <Image
-            source={require("@/assets/images/vnpt.jpg")}
-            style={styles.avatar}
-          />
-          {/* <Text style={styles.welcomeText}>Chào mừng trở lại</Text> */}
-          <Text style={styles.nameText}>
-            {user?.ho_ten || "Kỹ thuật viên VNPT"}
-          </Text>
-          <Text style={styles.subInfoText}>{user?.email || ""}</Text>
-
-          <View style={styles.statusCard}>
-            <Feather
-              name="globe"
-              size={20}
-              color={isOnline ? "#22C55E" : "#9CA3AF"}
+        <View style={styles.centerContainer}>
+          <View style={styles.card}>
+            <Image
+              source={require("@/assets/images/vnpt.jpg")}
+              style={styles.avatar}
             />
-
-            <Text
-              style={[
-                styles.statusText,
-                { color: isOnline ? "#22C55E" : "#9CA3AF" },
-              ]}
-            >
-              {isOnline ? "Đang trực tuyến" : "Đang ngoại tuyến"}
+            {/* <Text style={styles.welcomeText}>Chào mừng trở lại</Text> */}
+            <Text style={styles.nameText}>
+              {user?.ho_ten || "Kỹ thuật viên VNPT"}
             </Text>
-          </View>
+            <Text style={styles.subInfoText}>{user?.email || ""}</Text>
 
-          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <View style={styles.statusCard}>
+              <Feather
+                name="globe"
+                size={20}
+                color={isOnline ? "#22C55E" : "#9CA3AF"}
+              />
+
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: isOnline ? "#22C55E" : "#9CA3AF" },
+                ]}
+              >
+                {isOnline ? "Đang trực tuyến" : "Đang ngoại tuyến"}
+              </Text>
+            </View>
+
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+              <TouchableOpacity
+                style={[
+                  styles.toggleButton,
+                  isOnline ? styles.onlineBtn : styles.offlineBtn,
+                ]}
+                onPress={handleToggleStatus}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <>
+                    <Feather
+                      name="globe"
+                      size={20}
+                      color={isOnline ? "#22C55E" : "#9CA3AF"}
+                    />
+                    <Text style={styles.buttonText}>
+                      {isOnline ? "Chuyển ngoại tuyến" : "Chuyển trực tuyến"}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </Animated.View>
+
             <TouchableOpacity
-              style={[
-                styles.toggleButton,
-                isOnline ? styles.onlineBtn : styles.offlineBtn,
-              ]}
-              onPress={handleToggleStatus}
-              disabled={isLoading}
+              style={styles.logoutButton}
+              onPress={handleLogout}
             >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <>
-                  <Feather
-                    name="globe"
-                    size={20}
-                    color={isOnline ? "#22C55E" : "#9CA3AF"}
-                  />
-                  <Text style={styles.buttonText}>
-                    {isOnline ? "Chuyển ngoại tuyến" : "Chuyển trực tuyến"}
-                  </Text>
-                </>
-              )}
+              <Feather name="log-out" size={18} color="#fff" />
+              <Text style={styles.logoutText}>Đăng xuất</Text>
             </TouchableOpacity>
-          </Animated.View>
-
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Feather name="log-out" size={18} color="#fff" />
-            <Text style={styles.logoutText}>Đăng xuất</Text>
-          </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+    </View>
   );
 }
 

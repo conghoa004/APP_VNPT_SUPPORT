@@ -76,6 +76,6 @@ export default function Index() {
   return loggedIn ? (
     <Redirect href="/(tabs)/home" />
   ) : (
-    <Redirect href="/login" />
+    <Redirect href="../login" />
   );
 }

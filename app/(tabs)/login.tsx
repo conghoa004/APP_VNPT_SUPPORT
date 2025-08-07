@@ -1,6 +1,7 @@
 // Import các hook và component cần thiết
 import { useState } from "react";
 import {
+  Image,
   View,
   Text,
   TextInput,
@@ -91,6 +92,8 @@ export default function LoginScreen() {
 
       const data = await res.json();
 
+      console.log("Data:", data);
+
       // Đăng nhập thành công
       if (res.status === 200 && data.status === "success") {
         Toast.show({
@@ -169,7 +172,17 @@ export default function LoginScreen() {
       >
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.card}>
-            <Text style={styles.title}>VNPT SUPPORT</Text>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require("../../assets/images/vnpt.jpg")}
+                style={styles.logo}
+              />
+              <Text style={styles.brandText}>
+                <Text style={styles.vnpt}>VNPT</Text>
+                <Text style={styles.support}>Support</Text>
+              </Text>
+            </View>
+
             <Text style={styles.subtitle}>Đăng nhập để sử dụng hệ thống</Text>
 
             <View style={styles.form}>
@@ -336,5 +349,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 16,
     textDecorationLine: "underline",
+  },
+  logoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    gap: 8,
+  },
+  logo: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#fff",
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    elevation: 3, // Cho Android
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  brandText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  vnpt: {
+    color: "#00b4f0",
+  },
+  support: {
+    color: "#FFC107",
   },
 });

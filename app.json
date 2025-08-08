@@ -5,7 +5,7 @@
     "owner": "conghoa",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/vnpt.jpg",
     "scheme": "test",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/vnpt.jpg",
         "backgroundColor": "#ffffff",
         "usesCleartextTraffic": true
       },
@@ -40,7 +40,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/vnpt.jpg"
     },
     "plugins": [
       ["expo-notifications"],
@@ -48,7 +48,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/vnpt.jpg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -67,7 +67,7 @@
     },
     "extra": {
       "API_URL": "http://192.168.1.4:8000",
-      "API_URL_1": "https://test-kt8b.onrender.com",
+      "API_URL_1": "https://hoavan.id.vn",
       "router": {},
       "eas": {
         "projectId": "e7ce0f44-beb9-4ae5-83ac-6a32940d6a3a"

@@ -19,6 +19,8 @@ import Constants from "expo-constants"; // Lấy biến môi trường
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Lưu dữ liệu cục bộ
 import Toast from "react-native-toast-message"; // Hiển thị thông báo dạng toast
 import Header from "@/components/Header";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 // 🔹 Định nghĩa các hằng số
 const API_URL = Constants.expoConfig?.extra?.API_URL; // Lấy URL API từ file app.config.js
@@ -249,7 +251,11 @@ export default function HomeScreen() {
 
       // Gọi API logout
       const res = await fetch(`${API_URL}/api/logout`, {
-        method: "GET",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": (await AsyncStorage.getItem("csrf_token")) || "",
+        },
         credentials: "include",
       });
 
@@ -283,24 +289,30 @@ export default function HomeScreen() {
   };
 
   // 🔸 Khi mở lại ứng dụng
-  useEffect(() => {
-    const fetchUser = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-      const storedOnline = await AsyncStorage.getItem("isOnline");
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUser = async () => {
+        const storedUser = await AsyncStorage.getItem("user");
+        const storedOnline = await AsyncStorage.getItem("isOnline");
 
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          setUser(null);
+        }
 
-      if (storedOnline === "true") {
-        setIsOnline(true);
-        const isEnabled = await checkIfLocationIsEnabled();
-        if (isEnabled) await startBackgroundLocation();
-      }
-    };
+        if (storedOnline === "true") {
+          setIsOnline(true);
+          const isEnabled = await checkIfLocationIsEnabled();
+          if (isEnabled) await startBackgroundLocation();
+        } else {
+          setIsOnline(false);
+        }
+      };
 
-    fetchUser();
-  }, []);
+      fetchUser();
+    }, [])
+  );
 
   // 🔸 Nếu đang trực tuyến thì kiểm tra GPS có bị tắt không (mỗi 5s)
   useEffect(() => {

@@ -108,12 +108,14 @@ export default function LoginScreen() {
         csrfData = await csrfRes.json();
         csrfToken = csrfData.csrf_token;
 
+        // Lưu CSRF token vào bộ nhớ
         await AsyncStorage.setItem("csrf_token", csrfToken);
+
+        // Lưu user vào bộ nhớ
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
 
         // TODO: Chuyển trang sau khi login hoặc lưu session
         router.replace("/(tabs)/home");
-        // Lưu user vào bộ nhớ
-        await AsyncStorage.setItem("user", JSON.stringify(data.user));
       }
       // Lỗi validate đầu vào từ backend (422)
       else if (res.status === 422) {

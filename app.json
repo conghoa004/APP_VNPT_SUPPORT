@@ -66,8 +66,19 @@
       "typedRoutes": true
     },
     "extra": {
-      "API_URL": "http://192.168.1.4:8000",
-      "API_URL_1": "https://hoavan.id.vn",
+      "API_URL_1": "http://192.168.1.4:8000",
+      "API_URL": "https://spkt.hoavan.id.vn",
+
+      "#FIREBASE": "####",
+      "apiKey": "AIzaSyBISrcCFDVGrACOH5pGNlb2CBUnpF9eEF0",
+      "authDomain": "vnpt-support.firebaseapp.com",
+      "databaseURL": "https://vnpt-support-default-rtdb.asia-southeast1.firebasedatabase.app",
+      "projectId": "vnpt-support",
+      "storageBucket": "vnpt-support.firebasestorage.app",
+      "messagingSenderId": "997261688206",
+      "appId": "1:997261688206:web:2defce7f6f9e0d03e5f8df",
+      "measurementId": "G-9EW2DJ5331",
+
       "router": {},
       "eas": {
         "projectId": "e7ce0f44-beb9-4ae5-83ac-6a32940d6a3a"

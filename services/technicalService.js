@@ -1,17 +1,17 @@
-import { db } from '../config/firebaseConfig';
-import { ref, onValue, set, update, remove, push } from 'firebase/database';
+import { firestore } from '../config/firebaseConfig';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Hàm tạo dữ liệu khi nhân viên đăng nhập
 export async function createDataWhenLogin() {
-    // Lấy ID nhan viên trong bộ nhớ
+    // Lấy ID nhân viên trong bộ nhớ
     const userString = await AsyncStorage.getItem("user");
     if (!userString) throw new Error("Không tìm thấy user trong AsyncStorage");
 
     const user = JSON.parse(userString); // Parse chuỗi JSON thành object
 
-    const userRef = ref(db, 'technical/' + user.id_nhanvien);
-    await set(userRef, {
+    const userDocRef = doc(firestore, 'technical', user.id_nhanvien + ""); // ID phịa là chuỗi
+    await setDoc(userDocRef, {
         ...user,
         loai: "employee",
     });
@@ -19,37 +19,31 @@ export async function createDataWhenLogin() {
 
 // Hàm cập nhật vị trí
 export async function updateLocation(lat, lng) {
-    // Lấy ID nhan viên trong bộ nhớ
+    // Lấy ID nhân viên trong bộ nhớ
     const userString = await AsyncStorage.getItem("user");
     if (!userString) throw new Error("Không tìm thấy user trong AsyncStorage");
 
     const user = JSON.parse(userString); // Parse chuỗi JSON thành object
 
-    const userRef = ref(db, 'technical/' + user.id_nhanvien);
-    await update(userRef, {
+    const userDocRef = doc(firestore, 'technical', user.id_nhanvien + ""); // ID phỉa là chuỗi
+    await updateDoc(userDocRef, {
         kinh_do: lng,
         vi_do: lat,
     });
 }
 
-// Cập nhật trạng thái 
+// Cập nhật trạng thái
 export async function updateStatusFirebase(isOnline) {
-    // Lấy ID nhan viên trong bộ nhớ
+    // Lấy ID nhân viên trong bộ nhớ
     const userString = await AsyncStorage.getItem("user");
     if (!userString) throw new Error("Không tìm thấy user trong AsyncStorage");
 
     const user = JSON.parse(userString); // Parse chuỗi JSON thông tin người dùng
 
-    let status = '';
+    let status = isOnline ? 'Trực tuyến' : 'Không trực tuyến';
 
-    if (isOnline) {
-        status = 'Trực tuyến';
-    } else {
-        status = 'Không trực tuyến';
-    }
-
-    const userRef = ref(db, 'technical/' + user.id_nhanvien);
-    await update(userRef, {
+    const userDocRef = doc(firestore, 'technical', user.id_nhanvien + ""); // ID phịa là chuỗi
+    await updateDoc(userDocRef, {
         trang_thai: status,
     });
 }

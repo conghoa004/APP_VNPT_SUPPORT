@@ -8,9 +8,6 @@ import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Ionicons } from "@expo/vector-icons";
-import { Slot } from "expo-router";
-import Toast from "react-native-toast-message";
-
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -57,6 +54,16 @@ export default function TabLayout() {
         name="stacks"
         options={{
           title: "Stacks",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="checkmark-done-circle" size={28} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="test"
+        options={{
+          title: "test",
           tabBarIcon: ({ color }) => (
             <Ionicons name="checkmark-done-circle" size={28} color={color} />
           ),

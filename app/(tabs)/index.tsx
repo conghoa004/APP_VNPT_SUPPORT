@@ -4,6 +4,7 @@ import { ActivityIndicator, View } from "react-native";
 import { Redirect } from "expo-router";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getCurrentUser } from "@/services/authService";
 
 // Lấy URL của API từ biến môi trường trong app.json
 const API_URL = Constants.expoConfig?.extra?.API_URL;
@@ -73,7 +74,7 @@ export default function Index() {
 
   // Nếu đã đăng nhập, chuyển hướng đến trang chính (home)
   // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-  return loggedIn ? (
+  return loggedIn && getCurrentUser() ? (
     <Redirect href="/(tabs)/home" />
   ) : (
     <Redirect href="../login" />

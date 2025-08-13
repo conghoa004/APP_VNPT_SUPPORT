@@ -22,6 +22,18 @@ import Header from "@/components/Header";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
+// Thêm hàm xử lý Auth Firebase
+import {
+  login,
+  register,
+  logout,
+  getCurrentUser,
+} from "../../services/authService";
+import {
+  updateLocation,
+  updateStatusFirebase,
+} from "../../services/technicalService";
+
 // 🔹 Định nghĩa các hằng số
 const API_URL = Constants.expoConfig?.extra?.API_URL; // Lấy URL API từ file app.config.js
 const LOCATION_TASK_NAME = "background-location-task"; // Tên background task
@@ -61,18 +73,23 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
         //   JSON.stringify({ latitude, longitude })
         // );
 
-        // Lấy token và gửi vị trí mới
-        const storedCsrfToken = await AsyncStorage.getItem("csrf_token");
+        // Lấy token và gửi vị trí mới lên sever (Call API)
+        // const storedCsrfToken = await AsyncStorage.getItem("csrf_token");
 
-        await fetch(`${API_URL}/api/update-location`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": storedCsrfToken || "",
-          },
-          credentials: "include",
-          body: JSON.stringify({ latitude, longitude }),
-        });
+        // await fetch(`${API_URL}/api/update-location`, {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     "X-CSRF-TOKEN": storedCsrfToken || "",
+        //   },
+        //   credentials: "include",
+        //   body: JSON.stringify({ latitude, longitude }),
+        // });
+
+        // Cập nhật vị trí mới lên sever (Firebase)
+        if (getCurrentUser()) {
+          await updateLocation(latitude, longitude);
+        }
 
         console.log("📍 Gửi vị trí mới:", latitude, longitude);
       } catch (err) {
@@ -131,7 +148,7 @@ export default function HomeScreen() {
     if (!isTaskRunning) {
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.High,
-        timeInterval: 10000, // gửi mỗi 5 giây
+        timeInterval: 10000, // gửi mỗi 10 giây
         distanceInterval: 0,
         showsBackgroundLocationIndicator: true,
         foregroundService: {
@@ -224,7 +241,9 @@ export default function HomeScreen() {
 
         // Nếu đã đầy đủ điều kiện thì bắt đầu gửi vị trí và cập nhật trạng thái
         await startBackgroundLocation();
-        setIsOnline(true);
+        setIsOnline(true); // Cập nhật trạng thái online
+        // Cập nhật trạng thái online với firebase realtime database
+        await updateStatusFirebase(true);
 
         await updateStatusEmployee(true); // Cập nhật trạng thái online
         await AsyncStorage.setItem("isOnline", "true");
@@ -232,6 +251,9 @@ export default function HomeScreen() {
         // Nếu đang online thì cho phép chuyển offline
         await stopBackgroundLocation();
         setIsOnline(false);
+
+        // Cập nhật trạng thái online với firebase realtime database
+        await updateStatusFirebase(false);
 
         await updateStatusEmployee(false); // Cập nhật trạng thái offline
         await AsyncStorage.setItem("isOnline", "false");
@@ -263,8 +285,16 @@ export default function HomeScreen() {
 
       if (data.status === 200) {
         await stopBackgroundLocation(); // dừng gửi vị trí khi logout
+
+        // Cập nhật trạng thái đăng xuất
+        await updateStatusFirebase(false);
+
         await AsyncStorage.clear(); // xóa dữ liệu local
 
+        // Đăng xuất người dùng
+        await logout();
+
+        // Hiển thị thống báo thành công
         Toast.show({
           type: "success",
           text1: "Đăng xuất thành công!",

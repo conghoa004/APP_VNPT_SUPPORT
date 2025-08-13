@@ -22,6 +22,9 @@ import Feather from "react-native-vector-icons/Feather"; // Icon con mắt trong
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { login } from "@/services/authService";
+import { createDataWhenLogin } from "@/services/technicalService";
+
 // Lấy API_URL từ biến môi trường (app.json → extra)
 const API_URL = Constants.expoConfig?.extra?.API_URL;
 
@@ -96,6 +99,13 @@ export default function LoginScreen() {
 
       // Đăng nhập thành công
       if (res.status === 200) {
+        // Đăng nhập Firebase
+        await login(
+          Constants.expoConfig?.extra?.emailRoot,
+          Constants.expoConfig?.extra?.passwordRoot
+        );
+
+        // Hiển thị toast
         Toast.show({
           type: "success",
           text1: "Đăng nhập thành công!",
@@ -113,6 +123,9 @@ export default function LoginScreen() {
 
         // Lưu user vào bộ nhớ
         await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+        // Lưu dữ liệu nhân viên vào DB
+        await createDataWhenLogin();
 
         // TODO: Chuyển trang sau khi login hoặc lưu session
         router.replace("/(tabs)/home");

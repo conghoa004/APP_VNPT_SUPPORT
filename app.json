@@ -65,6 +65,13 @@
           "locationAlwaysAndWhenInUsePermission": "Cho phép ứng dụng VNPT Support luôn truy cập vị trí",
           "isAndroidBackgroundLocationEnabled": true
         }
+      ],
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Allow $(PRODUCT_NAME) to use your location"
+        }
       ]
     ],
     "experiments": {
